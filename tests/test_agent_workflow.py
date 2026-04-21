@@ -47,3 +47,18 @@ def test_mock_client_forces_llm_fallback_to_heuristics_for_analysis():
     assert any(issue.get("type") == "Code Quality" for issue in result["issues"])
     # Ensure we logged the fallback path
     assert any("Falling back to heuristics" in entry.get("message", "") for entry in result["logs"])
+
+
+def test_llm_fixer_short_output_falls_back_to_heuristics():
+    class ShortFixClient:
+        def complete(self, system_prompt: str, user_prompt: str) -> str:
+            if "Return ONLY valid JSON" in system_prompt:
+                return '[{"type": "Code Quality", "severity": "Low", "msg": "print used"}]'
+            return "# placeholder"
+
+    agent = BugHoundAgent(client=ShortFixClient())
+    code = "def f():\n    print('hi')\n    return True\n"
+    result = agent.run(code)
+
+    assert "logging.info(" in result["fixed_code"]
+    assert any("Falling back to heuristic fixer" in entry.get("message", "") for entry in result["logs"])

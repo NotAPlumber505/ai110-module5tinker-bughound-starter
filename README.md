@@ -107,3 +107,9 @@ You should see tests covering:
 * Risk scoring and guardrails
 * Heuristic fallbacks when LLM output is invalid
 * End-to-end agent workflow shape
+
+---
+
+## Student Learning Summary
+
+The core concept students needed to understand was that agent outputs are proposals, not truth, so every step needs validation and explicit guardrails. The most common struggle point was separating issue detection quality from fix quality, because a correct diagnosis can still produce a risky or malformed rewrite. AI was most helpful for quickly drafting candidate fixes and surfacing likely issues, especially in repetitive patterns like bare except and print usage. AI was most misleading when output formatting looked confident but violated the expected structure or changed too much code at once. I would guide a student by asking them to trace one failing example through plan, analyze, act, test, and reflect, then identify exactly where trust should drop. This keeps ownership of the reasoning with the student while still giving them a clear path to debug the system behavior.

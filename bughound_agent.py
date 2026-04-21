@@ -118,6 +118,12 @@ class BugHoundAgent:
             self._log("ACT", "LLM returned empty output. Falling back to heuristic fixer.")
             return self._heuristic_fix(code_snippet, issues)
 
+        original_non_empty = [line for line in code_snippet.splitlines() if line.strip()]
+        cleaned_non_empty = [line for line in cleaned.splitlines() if line.strip()]
+        if original_non_empty and len(cleaned_non_empty) <= max(1, int(len(original_non_empty) * 0.5)):
+            self._log("ACT", "LLM fixer output was suspiciously short. Falling back to heuristic fixer.")
+            return self._heuristic_fix(code_snippet, issues)
+
         return cleaned
 
     # ----------------------------
